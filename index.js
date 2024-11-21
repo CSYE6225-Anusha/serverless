@@ -56,14 +56,10 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error("General error:", error);
 
-    // Update status to "error" if there is an error before email is sent
-    if (emailLogEntry) {
-      await emailLogEntry.update({ status: "error" });
-    }
-
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to process verification email." }),
     };
+    
   }
 };
