@@ -39,7 +39,7 @@ exports.handler = async (event) => {
     const verificationToken = message.verificationToken;
     const first_name = message.first_name;
     const last_name = message.last_name;
-    const verificationLink = `http://${process.env.DOMAIN}/v1/user/verify?email=${userEmail}&token=${verificationToken}`;
+    const verificationLink = `https://${process.env.DOMAIN}/v1/user/verify?email=${userEmail}&token=${verificationToken}`;
 
     const data = {
       from: `Anusha Kadali <no-reply@${process.env.DOMAIN}>`,
