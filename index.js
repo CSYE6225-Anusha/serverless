@@ -1,22 +1,36 @@
 const mailgun = require("mailgun.js");
 const formData = require("form-data");
 const dotenv = require('dotenv');
+const AWS = require('aws-sdk');
+const secretsManager = new AWS.SecretsManager();
 
 // Load environment variables from .env file
 dotenv.config();
 
 // Mailgun configuration
 const DOMAIN = process.env.DOMAIN;
-const mailgunClient = new mailgun(formData).client({
-  username: "api",
-  key: process.env.MAILGUN_API_KEY,
-});
 
 // Lambda handler
 exports.handler = async (event) => {
+
+  const secretName = 'mailgun-api-key';
+
   let emailLogEntry;
 
   try {
+
+    const secretValue = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
+    let mailgunApiKey;
+    
+    if (secretValue.SecretString) {
+      mailgunApiKey = secretValue.SecretString;
+    }
+    const mailgunClient = new mailgun(formData).client({
+      username: "api",
+      key: mailgunApiKey,
+    });
+
+
     // Parse SNS message to get user email
     const message = JSON.parse(event.Records[0].Sns.Message);
     const userEmail = message.email;
